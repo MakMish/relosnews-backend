@@ -10,7 +10,6 @@ from SRC.USERS.Models import user,register,login
 from SRC.Utils.verify import sed
 from SRC.Utils.dbutils import get_db
 from SRC.USERS.Service import gets,ver
-from upstash_redis import Redis
 from SRC.USERS.Schemas import User
 router=APIRouter(prefix="/users")
 r=redis.Redis.from_url(url=setting.redis_url)

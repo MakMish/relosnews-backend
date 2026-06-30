@@ -1,7 +1,6 @@
 import smtplib
 import redis
 from SRC.Utils.model import setting
-from fastapi.responses import JSONResponse
 from email.message import EmailMessage
 from SRC.Utils.model import Setting
 from datetime import datetime,UTC
