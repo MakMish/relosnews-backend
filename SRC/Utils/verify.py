@@ -1,40 +1,46 @@
 import smtplib
 import redis
+from SRC.Utils.model import setting
 from fastapi.responses import JSONResponse
+from email.message import EmailMessage
 from SRC.Utils.model import Setting
+from datetime import datetime,UTC
 mas=Setting()
-r=redis.Redis.from_url(mas.redis_url,decode_responses=True)
-def sed(email:str,otp:int):
-    print("0")
-    message=f"hello there \n now stay updated with us \n welcome to relos news \n your otp is {otp} "
-    x=r.get(f"{email}")
-    print(x)
+r=redis.Redis.from_url(url=mas.redis_url)
+async def sed(email: str, otp: int):
+    # Check if OTP already exists in Redis
+    if r.exists(email):
+        return {"status": "already sent"}
+
     try:
-        if x is None:
-            server = smtplib.SMTP("smtp.gmail.com", 587)
-            print("1")
-            server.starttls()  # Secure connection
-            print("2")
-            server.login("makmish.dev@gmail.com", mas.app_pass)
-            print("3")
-            server.sendmail("makmish.dev@gmail.com", email, message)
-            print("4")
-            server.quit()
-            r.set(email,otp)
-            r.expire(email,60)
-            print(r.get(email))
-            r.expire(email,time=50)
-        else:
-            JSONResponse(
-                status_code=433,
-                content={
-                    "status":"already sent"
-                }
-            )
-            
+        # Email setup
+        msg = EmailMessage()
+        msg['Subject'] = "OTP Verification"
+        msg['From'] = "newsrelos@gmail.com"  # Verify ye email Brevo mein "Sender" domain mein added ho
+        msg['To'] = email
+        msg.set_content(f"Hello, your OTP for Relos News is: {otp}")
+        a= datetime.now(UTC)
+        # SMTP Connection to Brevo
+        print("1")
+        server = smtplib.SMTP("smtp-relay.brevo.com", 587)
+        print("2")
+        server.starttls()
+        print("3")
+        server.login(setting.Login, setting.smtp_key) 
+        print("4")
+        server.send_message(msg)
+        print("5")
+        server.quit()
+        print("6")
+        # Redis set
+        b=datetime.now(UTC)
+        print(f'///// yeh rha \n {b-a}')
+        r.setex(email, 60, otp)
+        return {"status": "sent"}
+        
     except Exception as e:
-        print(f"Error: {e}")
-    
+        print(f"Brevo Error: {e}")
+        return {"error": str(e)}
 def verify2(email: str, otp: int):
     print(r.get(email))
     print(r.get(email))

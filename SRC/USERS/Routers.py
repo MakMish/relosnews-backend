@@ -2,15 +2,18 @@ from fastapi import APIRouter,Depends,BackgroundTasks,HTTPException
 import random
 from passlib.context import CryptContext
 import redis
+from fastapi.responses import JSONResponse
+from SRC.Utils.verify import sed
 from SRC.Utils.model import setting
 from sqlalchemy.ext.asyncio import AsyncSession
 from SRC.USERS.Models import user,register,login
 from SRC.Utils.verify import sed
 from SRC.Utils.dbutils import get_db
 from SRC.USERS.Service import gets,ver
+from upstash_redis import Redis
 from SRC.USERS.Schemas import User
 router=APIRouter(prefix="/users")
-r=redis.Redis.from_url(setting.redis_url,decode_responses=True)
+r=redis.Redis.from_url(url=setting.redis_url)
 pwd_context=CryptContext(schemes=["bcrypt"],deprecated="auto")
 
 
@@ -48,3 +51,11 @@ async def sef(data:login,dba:AsyncSession=Depends(get_db)):
 @router.post("/{email1}/{otp}")
 async def votp(otp:int,email1:str):
     return  ver(email=email1,otp=otp)
+@router.get("/send")
+async def fafa():
+     return JSONResponse(
+          content={
+               "status":"accepted"
+          },
+          status_code=200
+     )

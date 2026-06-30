@@ -5,4 +5,8 @@ class Setting(BaseSettings):
     app_pass:str
     api_key:str
     redis_url:str
+    SMTP_Server:str
+    Port:int
+    Login:str
+    smtp_key:str
 setting=Setting()
