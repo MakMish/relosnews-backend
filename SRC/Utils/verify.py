@@ -1,5 +1,5 @@
-import smtplib
 import redis
+import aiosmtplib
 from SRC.Utils.model import setting
 from email.message import EmailMessage
 from SRC.Utils.model import Setting
@@ -12,30 +12,24 @@ async def sed(email: str, otp: int):
         return {"status": "already sent"}
 
     try:
-        # Email setup
-        msg = EmailMessage()
-        msg['Subject'] = "OTP Verification"
-        msg['From'] = "newsrelos@gmail.com"  # Verify ye email Brevo mein "Sender" domain mein added ho
-        msg['To'] = email
-        msg.set_content(f"Hello, your OTP for Relos News is: {otp}")
-        a= datetime.now(UTC)
-        # SMTP Connection to Brevo
-        print("1")
-        server = smtplib.SMTP("smtp-relay.brevo.com", 587,timeout=30)
-        print("2")
-        server.starttls()
-        print("3")
-        server.login(setting.Login, setting.smtp_key) 
-        print("4")
-        server.send_message(msg)
-        print("5")
-        server.quit()
-        print("6")
-        # Redis set
-        b=datetime.now(UTC)
-        print(f'///// yeh rha \n {b-a}')
-        r.setex(email, 60, otp)
-        return {"status": "sent"}
+            msg = EmailMessage()
+            msg["Subject"] = "OTP Verification"
+            msg["From"] = "newsrelos@gmail.com"
+            msg["To"] = email
+
+            msg.set_content(f"Your OTP is {otp}")
+            a=datetime.now(UTC)
+            await aiosmtplib.send(
+                msg,
+                hostname="smtp-relay.brevo.com",
+                port=587,
+                start_tls=True,
+                username=setting.Login,
+                password=setting.smtp_key,
+                timeout=30,
+            )
+            b=datetime.now(UTC)
+            print(f"{b-a}")
         
     except Exception as e:
         print(f"Brevo Error: {e}")
