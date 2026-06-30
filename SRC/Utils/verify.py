@@ -21,7 +21,7 @@ async def sed(email: str, otp: int):
         a= datetime.now(UTC)
         # SMTP Connection to Brevo
         print("1")
-        server = smtplib.SMTP("smtp-relay.brevo.com", 587)
+        server = smtplib.SMTP("smtp-relay.brevo.com", 587,timeout=30)
         print("2")
         server.starttls()
         print("3")
