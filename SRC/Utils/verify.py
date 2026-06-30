@@ -27,6 +27,7 @@ async def sed(email: str, otp: int):
                 username=setting.Login,
                 password=setting.smtp_key,
                 timeout=30,
+            
             )
             b=datetime.now(UTC)
             print(f"{b-a}")
