@@ -22,7 +22,7 @@ async def sed(email: str, otp: int):
             await aiosmtplib.send(
                 msg,
                 hostname="smtp-relay.brevo.com",
-                port=587,
+                port=465,
                 start_tls=True,
                 username=setting.Login,
                 password=setting.smtp_key,
