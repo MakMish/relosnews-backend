@@ -2,6 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import HTTPException,Request
 from sqlalchemy import select
 import redis
+from fastapi.responses import JSONResponse
 from SRC.USERS.Schemas import User
 from passlib.context import CryptContext
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -16,17 +17,25 @@ async def gets(data: login, dba: AsyncSession):
         v=await dba.execute(select(User).where(User.email==data.emai))
         reslt=v.scalars().first()
         if reslt is None:
-            raise HTTPException(status_code=438,detail="invalid")
+            return JSONResponse(
+                status_code=419,
+                content={
+                    "status":"invalid"
+                }
+            )
         return {
         "id": reslt.id,
         "name": reslt.name,
         "email":reslt.email
          }
-    except HTTPException as http_err:
-        raise http_err
-        
     except Exception as e:
-        raise HTTPException(status_code=444, detail=f"{e}")
+        return JSONResponse(
+            status_code=500,
+            content={
+                "status":f"error is diff , {e}"
+            }
+        )
+        
  
 
 async def ver(request1:Request,data:register,otp:int,dba:AsyncSession):
@@ -48,8 +57,6 @@ async def ver(request1:Request,data:register,otp:int,dba:AsyncSession):
             return {
                 "status": "success"
             }
-        elif v==1:
-            raise HTTPException(status_code=431,detail="otp expired")
         else:
             print(v)
             print("uoarr wala")
