@@ -23,7 +23,7 @@ async def sed(email: str, otp: int):
                 msg,
                 hostname="smtp-relay.brevo.com",
                 port=465,
-                start_tls=True,
+                use_tls=True,
                 username=setting.Login,
                 password=setting.smtp_key,
                 timeout=30,
