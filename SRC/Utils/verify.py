@@ -22,7 +22,7 @@ async def sed(email: str, otp: int):
     }
     
     payload = {
-        "sender": {"email": "newsrelos@gmail.com", "name": "Your App Name"},
+        "sender": {"email": "newsrelos@gmail.com", "name": "relos"},
         "to": [{"email": email}],
         "subject": "OTP Verification",
         "htmlContent": f"<p>Your OTP is <strong>{otp}</strong></p>"
