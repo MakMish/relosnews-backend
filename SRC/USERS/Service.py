@@ -18,7 +18,7 @@ async def gets(data: login, dba: AsyncSession):
         reslt=v.scalars().first()
         if reslt is None:
             return JSONResponse(
-                status_code=419,
+                status_code=268,
                 content={
                     "status":"invalid"
                 }
