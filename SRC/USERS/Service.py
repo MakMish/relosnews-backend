@@ -22,8 +22,11 @@ async def gets(data: login, dba: AsyncSession):
         "name": reslt.name,
         "email":reslt.email
          }
+    except HTTPException as http_err:
+        raise http_err
+        
     except Exception as e:
-        raise HTTPException(status_code=444,detail=f"{e}")
+        raise HTTPException(status_code=444, detail=f"{e}")
  
 
 async def ver(request1:Request,data:register,otp:int,dba:AsyncSession):
